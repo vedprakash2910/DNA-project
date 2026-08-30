@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DNA Mutation Analyzer</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+    <header class="navbar">
+
+        <div class="logo">
+            🧬 DNA Analyzer
+        </div>
+
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#upload">Upload DNA</a>
+            <a href="#results">Results</a>
+            <a href="#history">History</a>
+        </nav>
+
+    </header>
+
+
+    <!-- ================= HOME PAGE ================= -->
+    <section id="home" class="hero">
+
+        <div class="hero-content">
+
+            <span class="badge">DNA MUTATION ANALYSIS</span>
+
+            <h1>
+                Analyze DNA Sequences
+                <span>Quickly & Easily</span>
+            </h1>
+
+            <p>
+                Compare reference and sample DNA sequences to identify
+                mutations and view detailed mutation information.
+            </p>
+
+            <a href="#upload" class="primary-btn">
+                Start Analysis
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= UPLOAD PAGE ================= -->
+    <section id="upload" class="section">
+
+        <div class="section-title">
+            <span>01</span>
+            <h2>Upload DNA Sequence</h2>
+            <p>
+                Provide the reference and sample DNA sequences below.
+            </p>
+        </div>
+
+
+        <div class="upload-container">
+
+            <!-- Reference Sequence -->
+            <div class="sequence-card">
+
+                <div class="card-header">
+                    <div class="icon">🧬</div>
+
+                    <div>
+                        <h3>Reference Sequence</h3>
+                        <p>Enter the original DNA sequence</p>
+                    </div>
+                </div>
+
+                <textarea
+                    id="referenceSequence"
+                    placeholder="Example: ATGCTAGCTAGC"
+                ></textarea>
+
+                <div class="sequence-info">
+                    <span id="referenceCount">0 bases</span>
+                </div>
+
+            </div>
+
+
+            <!-- Sample Sequence -->
+            <div class="sequence-card">
+
+                <div class="card-header">
+                    <div class="icon">🔬</div>
+
+                    <div>
+                        <h3>Sample Sequence</h3>
+                        <p>Enter the DNA sequence to analyze</p>
+                    </div>
+                </div>
+
+                <textarea
+                    id="sampleSequence"
+                    placeholder="Example: ATGCTGGCTAGC"
+                ></textarea>
+
+                <div class="sequence-info">
+                    <span id="sampleCount">0 bases</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Analyze Button -->
+
+        <div class="analyze-area">
+
+            <button id="analyzeBtn" class="analyze-btn">
+                🔍 Analyze Mutation
+            </button>
+
+            <p id="errorMessage" class="error-message"></p>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= RESULTS PAGE ================= -->
+    <section id="results" class="section results-section">
+
+        <div class="section-title">
+            <span>02</span>
+            <h2>Mutation Results</h2>
+            <p>
+                Detected differences between the reference and sample DNA.
+            </p>
+        </div>
+
+
+        <!-- Result Summary -->
+
+        <div class="result-summary">
+
+            <div class="summary-card">
+                <span>Total Mutations</span>
+                <strong id="mutationCount">0</strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Reference Length</span>
+                <strong id="referenceLength">0</strong>
+            </div>
+
+            <div class="summary-card">
+                <span>Sample Length</span>
+                <strong id="sampleLength">0</strong>
+            </div>
+
+        </div>
+
+
+        <!-- Mutation Details -->
+
+        <div class="mutation-box">
+
+            <div class="mutation-header">
+
+                <div>
+                    <h3>Mutation Details</h3>
+                    <p>Detected mutation information</p>
+                </div>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Mutation Type</th>
+                            <th>Position</th>
+                            <th>Original Base</th>
+                            <th>Mutated Base</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="mutationTable">
+
+                        <tr>
+                            <td colspan="4" class="empty">
+                                No analysis performed yet.
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= HISTORY PAGE ================= -->
+    <section id="history" class="section">
+
+        <div class="section-title">
+
+            <span>03</span>
+
+            <h2>History / Reports</h2>
+
+            <p>
+                Previous DNA mutation analysis reports.
+            </p>
+
+        </div>
+
+
+        <div class="history-box">
+
+            <div class="history-header">
+
+                <h3>Analysis History</h3>
+
+                <button id="clearHistoryBtn" class="clear-btn">
+                    Clear History
+                </button>
+
+            </div>
+
+
+            <div id="historyList">
+
+                <div class="no-history">
+                    No previous reports available.
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <p>
+            © 2026 DNA Mutation Analyzer
+        </p>
+
+        <p>
+            Developed for DNA Sequence Analysis
+        </p>
+
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
