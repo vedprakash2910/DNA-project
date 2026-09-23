@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function UploadDNA({ onAnalyze }) {
+function UploadDNA({ onAnalyze, isLoading }) {
 
   const [reference, setReference] = useState("");
   const [sample, setSample] = useState("");
@@ -13,6 +13,8 @@ function UploadDNA({ onAnalyze }) {
   };
 
   const handleAnalyze = () => {
+
+    if (isLoading) return;
 
     setError("");
 
@@ -47,8 +49,6 @@ function UploadDNA({ onAnalyze }) {
     <section id="upload" className="section">
 
       <div className="section-title">
-
-        <span>01</span>
 
         <h2>
           Upload DNA Sequence
@@ -101,7 +101,7 @@ function UploadDNA({ onAnalyze }) {
 
         {/* Sample Sequence */}
 
-        <div className="sequence-card">
+        <div className="sequence-card sequence-card--sample">
 
           <div className="card-header">
 
@@ -143,8 +143,9 @@ function UploadDNA({ onAnalyze }) {
         <button
           className="analyze-btn"
           onClick={handleAnalyze}
+          disabled={isLoading}
         >
-          🔍 Analyze Mutation
+          {isLoading ? "Analyzing..." : "🔍 Analyze Mutation"}
         </button>
 
         {error && (

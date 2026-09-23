@@ -6,73 +6,59 @@ import UploadDNA from "./components/UploadDNA";
 import MutationResults from "./components/MutationResult";
 import History from "./components/History";
 
+import { analyzeSequences } from "./api/dnaApi";
+
 import "./App.css";
 
 function App() {
+  const [activeSection, setActiveSection] = useState("home");
+
   const [mutations, setMutations] = useState([]);
   const [history, setHistory] = useState([]);
 
-  const analyzeDNA = (reference, sample) => {
-    const results = [];
+  // API result handling state
+  const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState("");
+  const [hasAnalyzed, setHasAnalyzed] = useState(false);
 
-    const maxLength = Math.max(
-      reference.length,
-      sample.length
-    );
+  const analyzeDNA = async (reference, sample) => {
+    setIsLoading(true);
+    setApiError("");
 
-    for (let i = 0; i < maxLength; i++) {
-      const original = reference[i] || "-";
-      const mutated = sample[i] || "-";
+    try {
+      const results = await analyzeSequences(reference, sample);
 
-      if (original !== mutated) {
-        let type = "Substitution";
+      setMutations(results);
+      setHasAnalyzed(true);
 
-        if (original === "-") {
-          type = "Insertion";
-        } else if (mutated === "-") {
-          type = "Deletion";
-        }
+      const report = {
+        id: Date.now(),
+        date: new Date().toLocaleString(),
+        referenceLength: reference.length,
+        sampleLength: sample.length,
+        mutationCount: results.length,
+      };
 
-        results.push({
-          type: type,
-          position: i + 1,
-          original: original,
-          mutated: mutated
-        });
-      }
-    }
+      setHistory((previousHistory) => {
+        const updatedHistory = [report, ...previousHistory].slice(0, 10);
 
-    setMutations(results);
+        localStorage.setItem("dnaHistory", JSON.stringify(updatedHistory));
 
-    const report = {
-      id: Date.now(),
-      date: new Date().toLocaleString(),
-      referenceLength: reference.length,
-      sampleLength: sample.length,
-      mutationCount: results.length
-    };
+        return updatedHistory;
+      });
 
-    setHistory((previousHistory) => {
-      const updatedHistory = [
-        report,
-        ...previousHistory
-      ].slice(0, 10);
-
-      localStorage.setItem(
-        "dnaHistory",
-        JSON.stringify(updatedHistory)
+      // Jump the user straight to the Results tab once analysis finishes
+      setActiveSection("results");
+    } catch (err) {
+      // analyzeSequences already falls back locally on network/API errors,
+      // so this only fires for genuinely unexpected failures.
+      setApiError(
+        "Something went wrong while analyzing the sequences. Please try again."
       );
-
-      return updatedHistory;
-    });
-
-    setTimeout(() => {
-      document
-        .getElementById("results")
-        ?.scrollIntoView({
-          behavior: "smooth"
-        });
-    }, 100);
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const clearHistory = () => {
@@ -82,22 +68,33 @@ function App() {
 
   return (
     <>
-      <Navbar />
+      <Navbar activeSection={activeSection} onNavigate={setActiveSection} />
 
-      <Home />
+      {activeSection === "home" && (
+        <Home
+          onNavigate={setActiveSection}
+          hasAnalyzed={hasAnalyzed}
+          isLoading={isLoading}
+          mutationCount={mutations.length}
+        />
+      )}
 
-      <UploadDNA
-        onAnalyze={analyzeDNA}
-      />
+      {activeSection === "upload" && (
+        <UploadDNA onAnalyze={analyzeDNA} isLoading={isLoading} />
+      )}
 
-      <MutationResults
-        mutations={mutations}
-      />
+      {activeSection === "results" && (
+        <MutationResults
+          mutations={mutations}
+          isLoading={isLoading}
+          error={apiError}
+          hasAnalyzed={hasAnalyzed}
+        />
+      )}
 
-      <History
-        history={history}
-        onClear={clearHistory}
-      />
+      {activeSection === "history" && (
+        <History history={history} onClear={clearHistory} />
+      )}
     </>
   );
 }

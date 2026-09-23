@@ -8,8 +8,6 @@ function History({ history, onClear }) {
 
       <div className="section-title">
 
-        <span>03</span>
-
         <h2>
           History / Reports
         </h2>
