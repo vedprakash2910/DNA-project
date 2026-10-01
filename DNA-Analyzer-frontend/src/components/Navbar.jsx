@@ -1,4 +1,5 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const NAV_ITEMS = [
   { path: "/", label: "Home" },
@@ -8,6 +9,14 @@ const NAV_ITEMS = [
 ];
 
 function Navbar() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login", { replace: true });
+  };
+
   return (
     <header className="navbar">
       <div className="logo">🧬 DNA Analyzer</div>
@@ -28,10 +37,19 @@ function Navbar() {
           ))}
         </nav>
 
-        {/* Decorative for now — no auth system wired up yet */}
-        <button type="button" className="login-btn">
-          Login
-        </button>
+        {user ? (
+          <button type="button" className="login-btn" onClick={handleLogout}>
+            Logout ({user.name.split(" ")[0]})
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="login-btn"
+            onClick={() => navigate("/login")}
+          >
+            Login
+          </button>
+        )}
       </div>
     </header>
   );

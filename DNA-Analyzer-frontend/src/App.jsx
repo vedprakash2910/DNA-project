@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Home from "./components/Home";
@@ -7,6 +7,12 @@ import UploadDNA from "./components/UploadDNA";
 import MutationResults from "./components/MutationResult";
 import History from "./components/History";
 import HistoryDetail from "./components/HistoryDetail";
+
+// --- Auth (new) ---
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Login from "./components/Login";
+import Register from "./components/Register";
 
 import { analyzeSequences } from "./api/dnaApi";
 
@@ -27,8 +33,13 @@ function loadStoredHistory() {
   }
 }
 
-function App() {
+function AppContent() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Hide the Navbar on the login / register screens (new)
+  const isAuthPage =
+    location.pathname === "/login" || location.pathname === "/register";
 
   const [mutations, setMutations] = useState([]);
   const [history, setHistory] = useState(loadStoredHistory);
@@ -111,49 +122,79 @@ function App() {
 
   return (
     <>
-      <Navbar />
+      {!isAuthPage && <Navbar />}
 
       <Routes>
+        {/* Public routes (new) */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+        {/* Protected routes: require login */}
         <Route
           path="/"
           element={
-            <Home
-              hasAnalyzed={hasAnalyzed}
-              isLoading={isLoading}
-              mutationCount={mutations.length}
-            />
+            <ProtectedRoute>
+              <Home
+                hasAnalyzed={hasAnalyzed}
+                isLoading={isLoading}
+                mutationCount={mutations.length}
+              />
+            </ProtectedRoute>
           }
         />
 
         <Route
           path="/upload"
-          element={<UploadDNA onAnalyze={analyzeDNA} isLoading={isLoading} />}
+          element={
+            <ProtectedRoute>
+              <UploadDNA onAnalyze={analyzeDNA} isLoading={isLoading} />
+            </ProtectedRoute>
+          }
         />
 
         <Route
           path="/results"
           element={
-            <MutationResults
-              mutations={mutations}
-              isLoading={isLoading}
-              error={apiError}
-              hasAnalyzed={hasAnalyzed}
-            />
+            <ProtectedRoute>
+              <MutationResults
+                mutations={mutations}
+                isLoading={isLoading}
+                error={apiError}
+                hasAnalyzed={hasAnalyzed}
+              />
+            </ProtectedRoute>
           }
         />
 
         <Route
           path="/history"
-          element={<History history={history} onClear={clearHistory} />}
+          element={
+            <ProtectedRoute>
+              <History history={history} onClear={clearHistory} />
+            </ProtectedRoute>
+          }
         />
 
         {/* Selected-report view, reached via the "View" action in History */}
         <Route
           path="/history/:id"
-          element={<HistoryDetail history={history} />}
+          element={
+            <ProtectedRoute>
+              <HistoryDetail history={history} />
+            </ProtectedRoute>
+          }
         />
       </Routes>
     </>
+  );
+}
+
+// AuthProvider wraps everything so any component can call useAuth()
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

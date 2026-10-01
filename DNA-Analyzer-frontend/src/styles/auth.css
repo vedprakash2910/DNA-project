@@ -1,0 +1,173 @@
+/*
+  Auth pages (Login / Register)
+  Uses the SAME CSS variables defined in App.css (:root):
+  --midnight, --midnight-2, --lime, --lime-soft, --ink, --ink-muted,
+  --ink-faint, --border, --border-input, --on-lime, --font-display, --font-body.
+  Fallback values are included so the pages still look right on their own.
+*/
+
+.auth-page {
+  min-height: calc(100vh - 70px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 5%;
+
+  background: var(--midnight, #090810);
+  color: var(--ink, #f8fafc);
+  font-family: var(--font-body, "Inter", Arial, sans-serif);
+  position: relative;
+}
+
+/* Same soft lime glow used behind the hero DNA visual */
+.auth-page::before {
+  content: "";
+  position: absolute;
+  width: 340px;
+  height: 340px;
+  background: radial-gradient(circle, rgba(136, 255, 61, 0.16), transparent 70%);
+  filter: blur(10px);
+  pointer-events: none;
+}
+
+.auth-card {
+  position: relative;
+  z-index: 1;
+
+  width: 100%;
+  max-width: 420px;
+  padding: 32px 28px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  background: var(--midnight-2, #151922);
+  border: 1px solid var(--border, #23262f);
+  border-radius: 15px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+}
+
+.auth-title {
+  margin: 0 0 4px;
+  text-align: center;
+
+  font-family: var(--font-display, "Space Grotesk", "Inter", sans-serif);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.auth-subtitle {
+  margin: -8px 0 4px;
+  text-align: center;
+  color: var(--ink-muted, #94a3b8);
+  font-size: 14px;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auth-field label {
+  font-size: 13px;
+  color: var(--ink-muted, #94a3b8);
+}
+
+.auth-field input {
+  width: 100%;
+  padding: 12px 15px;
+
+  background: var(--midnight, #090810);
+  color: var(--ink, #f8fafc);
+  border: 1px solid var(--border-input, #2b2f3a);
+  border-radius: 10px;
+
+  font-family: inherit;
+  font-size: 15px;
+  outline: none;
+  transition: 0.2s;
+}
+
+.auth-field input::placeholder {
+  color: var(--ink-faint, #64748b);
+}
+
+.auth-field input:focus {
+  border-color: var(--lime, #88ff3d);
+}
+
+.auth-error {
+  color: #f87171;
+  font-size: 13px;
+}
+
+.auth-alert {
+  padding: 10px 14px;
+
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid #ef4444;
+  border-radius: 8px;
+
+  color: #f87171;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Matches .primary-btn / .analyze-btn */
+.auth-btn {
+  padding: 14px 26px;
+
+  background: var(--lime, #88ff3d);
+  color: var(--on-lime, #0b1400);
+
+  border: none;
+  border-radius: 8px;
+
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.auth-btn:hover:not(:disabled) {
+  background: var(--lime-soft, #aaff70);
+  transform: translateY(-2px);
+}
+
+.auth-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-switch {
+  margin: 0;
+  text-align: center;
+  font-size: 14px;
+  color: var(--ink-muted, #94a3b8);
+}
+
+.auth-switch a {
+  color: var(--lime, #88ff3d);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-switch a:hover {
+  color: var(--lime-soft, #aaff70);
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .auth-page {
+    padding: 30px 5%;
+  }
+
+  .auth-card {
+    padding: 26px 20px;
+  }
+}
