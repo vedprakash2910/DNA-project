@@ -1,20 +1,17 @@
-def extract_dna_sequence(content):
-    lines = content.splitlines()
+def extract_dna_sequence(content: str) -> str:
+    """Return a clean, upper-case sequence from FASTA / plain-text content.
 
+    - FASTA header lines (starting with '>') are skipped
+    - all whitespace (spaces, tabs, CR/LF) is removed
+    """
     sequence_parts = []
 
-    for line in lines:
+    for line in content.splitlines():
         line = line.strip()
 
-        if not line:
+        if not line or line.startswith(">"):
             continue
 
-        # Ignore FASTA header
-        if line.startswith(">"):
-            continue
+        sequence_parts.append("".join(line.split()))
 
-        sequence_parts.append(line)
-
-    sequence = "".join(sequence_parts).upper()
-
-    return sequence
+    return "".join(sequence_parts).upper()
