@@ -23,6 +23,7 @@ class FileTooLargeError(AppError):
     code = "file_too_large"
 
 
+<<<<<<< HEAD
 class EmptyFileError(AppError):
     status_code = 400
     code = "empty_file"
@@ -48,3 +49,51 @@ class EngineError(AppError):
 
     status_code = 500
     code = "engine_error"
+=======
+class InvalidDNASequenceError(Exception):
+    pass
+
+
+# ---------------------------------------------------------------------------
+# Errors for the classification / report endpoints.
+# They share one base class so main.py can turn all of them into a
+# consistent JSON error response with a single handler.
+# ---------------------------------------------------------------------------
+class DNAAppError(Exception):
+    status_code = 400
+    error_code = "bad_request"
+
+    def __init__(self, message):
+        super().__init__(message)
+        self.message = message
+
+
+class MissingSequenceError(DNAAppError):
+    status_code = 400
+    error_code = "missing_sequence"
+
+
+class InvalidSequenceError(DNAAppError):
+    status_code = 400
+    error_code = "invalid_sequence"
+
+
+class SequenceTooLongError(DNAAppError):
+    status_code = 413
+    error_code = "sequence_too_long"
+
+
+class InvalidAnnotationError(DNAAppError):
+    status_code = 422
+    error_code = "invalid_annotation"
+
+
+class ReportGenerationError(DNAAppError):
+    status_code = 500
+    error_code = "report_generation_failed"
+
+
+class PDFNotAvailableError(DNAAppError):
+    status_code = 501
+    error_code = "pdf_not_available"
+>>>>>>> 0167eaf (Add validation, error classes and report wiring)

@@ -1,15 +1,20 @@
+<<<<<<< HEAD
 import logging
 import time
 import uuid
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
+=======
+from fastapi import FastAPI, Request
+>>>>>>> 0167eaf (Add validation, error classes and report wiring)
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from config import ALLOWED_ORIGINS, APP_VERSION
 from routes.dna_routes import router as dna_router
+<<<<<<< HEAD
 from schemas.dna import HealthResponse
 from utils.exceptions import AppError
 from utils.logging_config import setup_logging
@@ -21,6 +26,15 @@ tags_metadata = [
     {"name": "DNA Analysis", "description": "Upload sequence files and detect mutations."},
     {"name": "System", "description": "Health and status checks."},
 ]
+=======
+import logging
+from fastapi.responses import JSONResponse
+from routes.report_routes import router as report_router
+from utils.exceptions import DNAAppError
+
+
+logger = logging.getLogger("dna_backend")
+>>>>>>> 0167eaf (Add validation, error classes and report wiring)
 
 app = FastAPI(
     title="DNA Sequence Mutation Detector API",
@@ -101,6 +115,33 @@ async def handle_unexpected_error(request: Request, exc: Exception):
 
 
 app.include_router(dna_router)
+app.include_router(report_router)
+
+@app.exception_handler(DNAAppError)
+async def dna_app_error_handler(request: Request, error: DNAAppError):
+    return JSONResponse(
+        status_code=error.status_code,
+        content={
+            "success": False,
+            "detail": error.message,
+            "error_code": error.error_code,
+        },
+    )
+
+
+@app.exception_handler(Exception)
+async def unexpected_error_handler(request: Request, error: Exception):
+    logger.exception("Unhandled error on %s", request.url.path)
+    return JSONResponse(
+        status_code=500,
+        content={
+            "success": False,
+            "detail": "Internal server error",
+            "error_code": "internal_error",
+        },
+    )
+
+
 
 
 @app.get("/", tags=["System"], summary="Root message")

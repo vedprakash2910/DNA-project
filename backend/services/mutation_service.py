@@ -90,3 +90,36 @@ def detect_mutations(reference, sample):
         i += 1
 
     return mutations
+
+
+def format_mutations(mutations):
+    """Convert raw detect_mutations() output to the API's common mutation format."""
+    formatted = []
+
+    for mutation in mutations:
+
+        if mutation["type"] == "SNP":
+            formatted.append({
+                "type": "Substitution",
+                "position": mutation["position"],
+                "original": mutation["reference_base"],
+                "mutated": mutation["sample_base"]
+            })
+
+        elif mutation["type"] == "Insertion":
+            formatted.append({
+                "type": "Insertion",
+                "position": mutation["position"],
+                "original": "-",
+                "mutated": mutation["inserted_base"]
+            })
+
+        elif mutation["type"] == "Deletion":
+            formatted.append({
+                "type": "Deletion",
+                "position": mutation["position"],
+                "original": mutation["deleted_base"],
+                "mutated": "-"
+            })
+
+    return formatted
