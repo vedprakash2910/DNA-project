@@ -1,0 +1,20 @@
+{
+  "reference": "ATGGCCATTGTAATGGGCCGCTGAAAGGGTGCCCGATAGCTAGCTAGGATCCGATTACAGGCTA",
+  "sample": "ATGGCCGTTGTAAAGGGCCGCTGAAAGGGTGCCCGATAGCTTAGCTAGGATCCGATACAGGCTA",
+  "reference_name": "reference.fasta",
+  "sample_name": "sample.fasta",
+  "annotations": [
+    {
+      "name": "Exon 1",
+      "feature_type": "exon",
+      "start": 1,
+      "end": 20
+    },
+    {
+      "name": "GeneX",
+      "feature_type": "gene",
+      "start": 5,
+      "end": 45
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "success": true,
+  "message": "Report generated successfully",
+  "report": {
+    "report_id": "00000000-0000-4000-8000-000000000000",
+    "report_version": "1.0",
+    "generated_at": "2026-10-07T12:00:00+00:00",
+    "inputs": {
+      "reference": {
+        "name": "reference.fasta",
+        "metadata": {
+          "length": 64,
+          "A_count": 16,
+          "T_count": 14,
+          "G_count": 20,
+          "C_count": 14,
+          "GC_content": 53.12
+        }
+      },
+      "sample": {
+        "name": "sample.fasta",
+        "metadata": {
+          "length": 64,
+          "A_count": 16,
+          "T_count": 13,
+          "G_count": 21,
+          "C_count": 14,
+          "GC_content": 54.69
+        }
+      }
+    },
+    "summary": {
+      "total_mutations": 4,
+      "mutation_detected": true,
+      "by_type": {
+        "Substitution": 2,
+        "Insertion": 1,
+        "Deletion": 1
+      },
+      "by_subtype": {
+        "Transition": 1,
+        "Transversion": 1,
+        "Insertion": 1,
+        "Deletion": 1
+      },
+      "transition_transversion_ratio": 1.0,
+      "mutation_rate_percent": 6.25,
+      "overall_classification": "High"
+    },
+    "mutations": [
+      {
+        "id": "M1",
+        "type": "Substitution",
+        "category": "SNP",
+        "subtype": "Transition",
+        "position": 7,
+        "original": "A",
+        "mutated": "G",
+        "annotations": [
+          {
+            "name": "Exon 1",
+            "feature_type": "exon",
+            "start": 1,
+            "end": 20
+          },
+          {
+            "name": "GeneX",
+            "feature_type": "gene",
+            "start": 5,
+            "end": 45
+          }
+        ]
+      },
+      {
+        "id": "M2",
+        "type": "Substitution",
+        "category": "SNP",
+        "subtype": "Transversion",
+        "position": 14,
+        "original": "T",
+        "mutated": "A",
+        "annotations": [
+          {
+            "name": "Exon 1",
+            "feature_type": "exon",
+            "start": 1,
+            "end": 20
+          },
+          {
+            "name": "GeneX",
+            "feature_type": "gene",
+            "start": 5,
+            "end": 45
+          }
+        ]
+      },
+      {
+        "id": "M3",
+        "type": "Insertion",
+        "category": "Indel",
+        "subtype": "Insertion",
+        "position": 42,
+        "original": "-",
+        "mutated": "T",
+        "annotations": [
+          {
+            "name": "GeneX",
+            "feature_type": "gene",
+            "start": 5,
+            "end": 45
+          }
+        ]
+      },
+      {
+        "id": "M4",
+        "type": "Deletion",
+        "category": "Indel",
+        "subtype": "Deletion",
+        "position": 56,
+        "original": "T",
+        "mutated": "-",
+        "annotations": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "missing_sequence": {
+    "http_status": 400,
+    "body": {
+      "success": false,
+      "detail": "Both reference and sample sequences are required",
+      "error_code": "missing_sequence"
+    }
+  },
+  "invalid_sequence": {
+    "http_status": 400,
+    "body": {
+      "success": false,
+      "detail": "Reference sequence contains invalid character 'X' at position 4. Only A, T, G and C are allowed.",
+      "error_code": "invalid_sequence"
+    }
+  },
+  "annotation_out_of_range": {
+    "http_status": 422,
+    "body": {
+      "success": false,
+      "detail": "Annotation 'Gene' ends at 99, beyond the reference length (4)",
+      "error_code": "invalid_annotation"
+    }
+  }
+}
