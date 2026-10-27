@@ -2,8 +2,16 @@ from pathlib import Path
 
 from config import MAX_FILE_SIZE, MAX_SEQUENCE_LENGTH
 
+from utils.exceptions import (
+    InvalidAnnotationError,
+    InvalidSequenceError,
+    MissingSequenceError,
+    SequenceTooLongError,
+)
+
 ALLOWED_EXTENSIONS = {".fasta", ".fa", ".txt"}
 ALLOWED_BASES = frozenset("ATGC")
+MAX_ANNOTATIONS = 1000
 
 
 def validate_filename(filename):
@@ -28,7 +36,10 @@ def validate_file_size(file_size):
 
 
 def find_invalid_base(sequence: str):
-    """Return (index, character) of the first non-ATGC character, or None."""
+    """Return (index, character) of the first non-ATGC character, or None.
+
+    `index` is 0-based. Add 1 when you show it to a person.
+    """
     for index, base in enumerate(sequence.upper()):
         if base not in ALLOWED_BASES:
             return index, base
@@ -43,21 +54,14 @@ def validate_dna_sequence(sequence):
 
     return find_invalid_base(sequence) is None
 
-<<<<<<< HEAD
 
 def validate_sequence_length(sequence: str) -> bool:
     return len(sequence) <= MAX_SEQUENCE_LENGTH
-=======
-    return all(base in allowed_bases for base in sequence)
 
 
-    # ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
 # Validation for the classification / report endpoints (JSON request bodies)
 # ---------------------------------------------------------------------------
-MAX_SEQUENCE_LENGTH = 1_000_000  # bases, per sequence
-MAX_ANNOTATIONS = 1000
-
-
 def normalize_sequence(raw):
     """Upper-case a pasted sequence, drop FASTA header lines and ALL whitespace."""
     if raw is None:
@@ -67,15 +71,6 @@ def normalize_sequence(raw):
         if not line.lstrip().startswith(">")
     ]
     return "".join("".join(lines).split()).upper()
-
-
-def find_invalid_base(sequence):
-    """Return (character, 1-based position) of the first non-ATGC base, or None."""
-    allowed = set("ATGC")
-    for index, base in enumerate(sequence, start=1):
-        if base not in allowed:
-            return base, index
-    return None
 
 
 def validate_sequence_pair(reference, sample):
@@ -94,10 +89,10 @@ def validate_sequence_pair(reference, sample):
             )
         invalid = find_invalid_base(sequence)
         if invalid:
-            base, position = invalid
+            index, base = invalid
             raise InvalidSequenceError(
                 f"{label} sequence contains invalid character '{base}' at "
-                f"position {position}. Only A, T, G and C are allowed."
+                f"position {index + 1}. Only A, T, G and C are allowed."
             )
 
     return reference, sample
@@ -138,4 +133,3 @@ def validate_annotation_regions(regions, reference_length):
         )
 
     return cleaned
->>>>>>> 0167eaf (Add validation, error classes and report wiring)

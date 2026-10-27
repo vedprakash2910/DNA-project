@@ -22,8 +22,6 @@ class FileTooLargeError(AppError):
     status_code = 413
     code = "file_too_large"
 
-
-<<<<<<< HEAD
 class EmptyFileError(AppError):
     status_code = 400
     code = "empty_file"
@@ -49,7 +47,7 @@ class EngineError(AppError):
 
     status_code = 500
     code = "engine_error"
-=======
+
 class InvalidDNASequenceError(Exception):
     pass
 
@@ -96,4 +94,57 @@ class ReportGenerationError(DNAAppError):
 class PDFNotAvailableError(DNAAppError):
     status_code = 501
     error_code = "pdf_not_available"
->>>>>>> 0167eaf (Add validation, error classes and report wiring)
+
+
+
+
+
+# ---------------------------------------------------------------------------
+# Authentication (401 = "who are you?") and authorization (403 = "not allowed")
+# ---------------------------------------------------------------------------
+class EmailAlreadyRegisteredError(AppError):
+    status_code = 409
+    code = "email_already_registered"
+
+
+class InvalidCredentialsError(AppError):
+    """Wrong email OR wrong password - deliberately the same error for both."""
+
+    status_code = 401
+    code = "invalid_credentials"
+
+
+class NotAuthenticatedError(AppError):
+    """No (usable) Authorization header was sent."""
+
+    status_code = 401
+    code = "not_authenticated"
+    headers = {"WWW-Authenticate": "Bearer"}
+
+
+class TokenExpiredError(AppError):
+    """Signature was fine but the 'exp' time has passed -> client should log in again."""
+
+    status_code = 401
+    code = "token_expired"
+    headers = {"WWW-Authenticate": 'Bearer error="invalid_token", error_description="token expired"'}
+
+
+class TokenInvalidError(AppError):
+    """Bad signature, malformed token, wrong algorithm, missing claims, unknown user..."""
+
+    status_code = 401
+    code = "invalid_token"
+    headers = {"WWW-Authenticate": 'Bearer error="invalid_token"'}
+
+
+class ForbiddenError(AppError):
+    """Logged in, but not allowed to touch this resource."""
+
+    status_code = 403
+    code = "forbidden"
+
+
+class RecordNotFoundError(AppError):
+    status_code = 404
+    code = "record_not_found"

@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Depends, Response
 
+from dependencies import get_current_user
 from schemas.report_schemas import AnalysisRequest
 from services.report_service import (
     analyze_pair,
@@ -9,7 +10,6 @@ from services.report_service import (
     report_to_csv,
     report_to_pdf,
 )
-
 router = APIRouter(
     prefix="/api/dna",
     tags=["Classification & Reports"]

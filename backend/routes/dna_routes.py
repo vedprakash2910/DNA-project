@@ -1,10 +1,18 @@
 
 from fastapi import APIRouter, File, UploadFile
 
+
+from dependencies import get_current_user
 from schemas.dna import AnalysisResponse, ErrorResponse, SequenceRequest, UploadResponse
 from services import analysis_service, file_service
 
-router = APIRouter(prefix="/api/dna", tags=["DNA Analysis"])
+
+
+router = APIRouter(
+    prefix="/api/dna",
+    tags=["DNA Analysis"],
+    dependencies=[Depends(get_current_user)],  # login required for every route here
+)
 
 _ERRORS = {
     400: {"model": ErrorResponse, "description": "Invalid filename, empty file or non-UTF-8 file"},

@@ -26,3 +26,26 @@ ALLOWED_ORIGINS = _list_env(
 )
 
 LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
+
+# --------------------------------------------------------------------------
+# Authentication
+# --------------------------------------------------------------------------
+# Secret used to SIGN tokens. Set JWT_SECRET in the environment (>= 32 random
+# characters). If it is missing we make a random one at start-up: fine for
+# local development, but every restart (or extra worker) then invalidates
+# all tokens, so main.py logs a warning.
+_jwt_secret = os.environ.get("JWT_SECRET")
+JWT_SECRET_IS_EPHEMERAL = not _jwt_secret
+JWT_SECRET = _jwt_secret or secrets.token_urlsafe(48)
+JWT_ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = _int_env("ACCESS_TOKEN_EXPIRE_MINUTES", 30)
+
+MIN_PASSWORD_LENGTH = 8
+MAX_PASSWORD_LENGTH = 128
+
+# SQLite file holding users and saved records.
+DATABASE_PATH = os.environ.get(
+    "DATABASE_PATH",
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "app.db"),
+)
+
