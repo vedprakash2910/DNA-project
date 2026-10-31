@@ -12,7 +12,7 @@ from utils.exceptions import (
     InvalidDNASequenceError,
     InvalidFilenameError,
     InvalidFileTypeError,
-    SequenceTooLongError,
+    FileSequenceTooLongError,
 )
 from utils.fasta_parser import extract_dna_sequence
 from utils.validation import (
@@ -52,7 +52,7 @@ def parse_dna_file(filename: str, content: bytes) -> dict:
         raise EmptyFileError("File contains no sequence data")
 
     if len(sequence) > MAX_SEQUENCE_LENGTH:
-        raise SequenceTooLongError(
+        raise FileSequenceTooLongError(
             f"Sequence is too long ({len(sequence)} bases). "
             f"Maximum is {MAX_SEQUENCE_LENGTH}"
         )

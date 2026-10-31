@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, Response
 
 from dependencies import get_current_user
-from schemas.report_schemas import AnalysisRequest
+from schemas.dna import ErrorResponse
+from schemas.report_schemas import AnalysisRequest, ClassificationResponse, ReportResponse
 from services.report_service import (
     analyze_pair,
     build_report,
@@ -12,14 +13,16 @@ from services.report_service import (
 )
 router = APIRouter(
     prefix="/api/dna",
-    tags=["Classification & Reports"]
+    tags=["Classification & Reports"],
+    dependencies=[Depends(get_current_user)],
 )
 
 ERROR_RESPONSES = {
-    400: {"description": "Missing or invalid sequence"},
-    413: {"description": "Sequence too long"},
-    422: {"description": "Invalid request body or annotation"},
-    500: {"description": "Report generation failed"},
+    400: {"model": ErrorResponse, "description": "Missing or invalid sequence"},
+    401: {"model": ErrorResponse, "description": "Missing, invalid or expired token"},
+    413: {"model": ErrorResponse, "description": "Sequence too long"},
+    422: {"model": ErrorResponse, "description": "Invalid request body or annotation"},
+    500: {"model": ErrorResponse, "description": "Report generation failed"},
 }
 
 
@@ -36,13 +39,24 @@ def _download(content, media_type, filename):
     )
 
 
-@router.post("/classify", responses=ERROR_RESPONSES)
+@router.post(
+        "/classify",
+    response_model=ClassificationResponse,
+    summary="Classify detected mutations (SNP / Indel)",
+    responses=ERROR_RESPONSES,
+)
+         
 def classify(data: AnalysisRequest):
     """Detect mutations and classify each one (SNP/Indel, transition/transversion)."""
     return classification_response(_run(data))
 
 
-@router.post("/report", responses=ERROR_RESPONSES)
+@router.post(
+    "/report",
+    response_model=ReportResponse,
+    summary="Full mutation report as JSON",
+    responses=ERROR_RESPONSES,
+)
 def report(data: AnalysisRequest):
     """Full report as JSON: inputs, summary, classified + annotated mutations."""
     analysis = _run(data)
@@ -51,18 +65,28 @@ def report(data: AnalysisRequest):
     )
 
 
-@router.post("/report/csv", responses={**ERROR_RESPONSES, 200: {"content": {"text/csv": {}}}})
+@router.post(
+    "/report/csv",
+    summary="Download the report as CSV",
+    responses={**ERROR_RESPONSES, 200: {"content": {"text/csv": {}}}},
+)
 def report_csv(data: AnalysisRequest):
     """Same report as a CSV download (one row per mutation)."""
     analysis = _run(data)
     csv_text = report_to_csv(build_report(analysis, data.reference_name, data.sample_name))
-    # utf-8-sig adds a BOM so Excel reads non-ASCII annotation names correctly
     return _download(csv_text.encode("utf-8-sig"), "text/csv; charset=utf-8",
                      "dna_mutation_report.csv")
 
 
-@router.post("/report/pdf", responses={**ERROR_RESPONSES, 200: {"content": {"application/pdf": {}}},
-                                       501: {"description": "reportlab is not installed"}})
+@router.post(
+    "/report/pdf",
+    summary="Download the report as PDF",
+    responses={
+        **ERROR_RESPONSES,
+        200: {"content": {"application/pdf": {}}},
+        501: {"model": ErrorResponse, "description": "reportlab is not installed"},
+    },
+)
 def report_pdf(data: AnalysisRequest):
     """Same report as a PDF download."""
     analysis = _run(data)

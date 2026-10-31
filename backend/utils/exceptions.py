@@ -48,15 +48,7 @@ class EngineError(AppError):
     status_code = 500
     code = "engine_error"
 
-class InvalidDNASequenceError(Exception):
-    pass
 
-
-# ---------------------------------------------------------------------------
-# Errors for the classification / report endpoints.
-# They share one base class so main.py can turn all of them into a
-# consistent JSON error response with a single handler.
-# ---------------------------------------------------------------------------
 class DNAAppError(Exception):
     status_code = 400
     error_code = "bad_request"
@@ -96,12 +88,6 @@ class PDFNotAvailableError(DNAAppError):
     error_code = "pdf_not_available"
 
 
-
-
-
-# ---------------------------------------------------------------------------
-# Authentication (401 = "who are you?") and authorization (403 = "not allowed")
-# ---------------------------------------------------------------------------
 class EmailAlreadyRegisteredError(AppError):
     status_code = 409
     code = "email_already_registered"

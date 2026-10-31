@@ -15,6 +15,7 @@ router = APIRouter(
 )
 
 _ERRORS = {
+    401: {"model": ErrorResponse, "description": "Missing, invalid or expired token"},
     400: {"model": ErrorResponse, "description": "Invalid filename, empty file or non-UTF-8 file"},
     413: {"model": ErrorResponse, "description": "File larger than the upload limit"},
     415: {"model": ErrorResponse, "description": "File extension not allowed"},
@@ -32,7 +33,7 @@ _ERRORS = {
         "validates them and returns the cleaned sequences with base counts and GC content. "
         "Use the returned sequences with `POST /api/dna/analyze-sequences`."
     ),
-    responses={k: _ERRORS[k] for k in (400, 413, 415, 422, 500)},
+    responses={k: _ERRORS[k] for k in (400, 401, 413, 415, 422, 500)},
 )
 async def upload_dna(
     reference_file: UploadFile = File(..., description="Reference sequence file"),

@@ -1,0 +1,257 @@
+{
+  "_readme": "Replayed in order by tests/test_documented_examples.py. Values shown as \"<masked>\" change on every run (ids, timestamps, tokens) and are not compared.",
+  "register": {
+    "request": {
+      "method": "POST",
+      "path": "/api/auth/register",
+      "json": {
+        "email": "alice@example.com",
+        "password": "correct-horse-1"
+      }
+    },
+    "status": 201,
+    "response": {
+      "success": true,
+      "message": "Account created",
+      "user": {
+        "id": "<masked>",
+        "email": "alice@example.com",
+        "role": "user",
+        "created_at": "<masked>"
+      }
+    }
+  },
+  "register_duplicate_email": {
+    "request": {
+      "method": "POST",
+      "path": "/api/auth/register",
+      "json": {
+        "email": "alice@example.com",
+        "password": "correct-horse-1"
+      }
+    },
+    "status": 409,
+    "response": {
+      "success": false,
+      "error": "email_already_registered",
+      "detail": "An account with this email already exists"
+    }
+  },
+  "login": {
+    "request": {
+      "method": "POST",
+      "path": "/api/auth/login",
+      "json": {
+        "email": "alice@example.com",
+        "password": "correct-horse-1"
+      }
+    },
+    "status": 200,
+    "response": {
+      "success": true,
+      "access_token": "<masked>",
+      "token_type": "bearer",
+      "expires_in": 1800,
+      "user": {
+        "id": "<masked>",
+        "email": "alice@example.com",
+        "role": "user",
+        "created_at": "<masked>"
+      }
+    }
+  },
+  "login_wrong_password": {
+    "request": {
+      "method": "POST",
+      "path": "/api/auth/login",
+      "json": {
+        "email": "alice@example.com",
+        "password": "wrong-password-1"
+      }
+    },
+    "status": 401,
+    "response": {
+      "success": false,
+      "error": "invalid_credentials",
+      "detail": "Invalid email or password"
+    }
+  },
+  "me": {
+    "request": {
+      "method": "GET",
+      "path": "/api/auth/me",
+      "auth": true
+    },
+    "status": 200,
+    "response": {
+      "success": true,
+      "user": {
+        "id": "<masked>",
+        "email": "alice@example.com",
+        "role": "user",
+        "created_at": "<masked>"
+      }
+    }
+  },
+  "me_without_token": {
+    "request": {
+      "method": "GET",
+      "path": "/api/auth/me"
+    },
+    "status": 401,
+    "response": {
+      "success": false,
+      "error": "not_authenticated",
+      "detail": "Authentication required. Send 'Authorization: Bearer <token>'."
+    }
+  },
+  "upload": {
+    "request": {
+      "method": "POST",
+      "path": "/api/dna/upload",
+      "auth": true,
+      "files": {
+        "reference_file": {
+          "filename": "reference.fasta",
+          "content": ">ref\nATGCATGC\n"
+        },
+        "sample_file": {
+          "filename": "sample.fasta",
+          "content": ">smp\nATGTATGC\n"
+        }
+      }
+    },
+    "status": 200,
+    "response": {
+      "success": true,
+      "message": "DNA files processed successfully",
+      "reference": {
+        "filename": "reference.fasta",
+        "sequence": "ATGCATGC",
+        "metadata": {
+          "length": 8,
+          "A_count": 2,
+          "T_count": 2,
+          "G_count": 2,
+          "C_count": 2,
+          "GC_content": 50.0
+        }
+      },
+      "sample": {
+        "filename": "sample.fasta",
+        "sequence": "ATGTATGC",
+        "metadata": {
+          "length": 8,
+          "A_count": 2,
+          "T_count": 3,
+          "G_count": 2,
+          "C_count": 1,
+          "GC_content": 37.5
+        }
+      }
+    }
+  },
+  "upload_wrong_extension": {
+    "request": {
+      "method": "POST",
+      "path": "/api/dna/upload",
+      "auth": true,
+      "files": {
+        "reference_file": {
+          "filename": "reference.pdf",
+          "content": "ATGC"
+        },
+        "sample_file": {
+          "filename": "sample.fasta",
+          "content": "ATGC"
+        }
+      }
+    },
+    "status": 415,
+    "response": {
+      "success": false,
+      "error": "unsupported_file_type",
+      "detail": "Invalid file type. Allowed: .fasta, .fa, .txt"
+    }
+  },
+  "analyze_sequences": {
+    "request": {
+      "method": "POST",
+      "path": "/api/dna/analyze-sequences",
+      "auth": true,
+      "json": {
+        "reference": "ATGCATGC",
+        "sample": "ATGTATGC"
+      }
+    },
+    "status": 200,
+    "response": {
+      "success": true,
+      "message": "DNA analysis completed",
+      "mutation_detected": true,
+      "mutation_count": 1,
+      "summary": {
+        "substitutions": 1,
+        "insertions": 0,
+        "deletions": 0
+      },
+      "mutations": [
+        {
+          "type": "Substitution",
+          "position": 4,
+          "original": "C",
+          "mutated": "T"
+        }
+      ]
+    }
+  },
+  "analyze_sequences_invalid_base": {
+    "request": {
+      "method": "POST",
+      "path": "/api/dna/analyze-sequences",
+      "auth": true,
+      "json": {
+        "reference": "ATGX",
+        "sample": "ATGC"
+      }
+    },
+    "status": 422,
+    "response": {
+      "success": false,
+      "error": "validation_error",
+      "detail": "reference: Can contain only A, T, G and C (found 'X' at position 4)",
+      "errors": [
+        {
+          "field": "reference",
+          "message": "Can contain only A, T, G and C (found 'X' at position 4)"
+        }
+      ]
+    }
+  },
+  "record_create": {
+    "request": {
+      "method": "POST",
+      "path": "/api/records",
+      "auth": true,
+      "json": {
+        "reference": "ATGCATGC",
+        "sample": "ATGTATGC",
+        "title": "Demo analysis"
+      }
+    },
+    "status": 201,
+    "response": {
+      "success": true,
+      "message": "Record saved",
+      "record": {
+        "id": "<masked>",
+        "owner_id": "<masked>",
+        "title": "Demo analysis",
+        "created_at": "<masked>",
+        "total_mutations": 1,
+        "overall_classification": "High",
+        "report": "<masked>"
+      }
+    }
+  }
+}
